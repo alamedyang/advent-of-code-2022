@@ -20,7 +20,7 @@ const puzzle = (inputText) => {
 };
 
 console.log(me.unitTestResults(
-	'Sample input:',
+	'Sample input',
 	sampleAnswer,
 	puzzle(sampleFileText)
 ));
