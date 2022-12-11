@@ -5,16 +5,15 @@ const me = require('../me.js');
 const dataPath = path.join(__dirname , 'input.txt');
 const sampleDataPath = path.join(__dirname , 'sample-input.txt');
 
-const fileText = fs.readFileSync(dataPath, 'utf-8');
-const sampleFileText = fs.readFileSync(sampleDataPath, 'utf-8');
+const fileText = fs.readFileSync(dataPath, 'utf-8').trim();
+const sampleFileText = fs.readFileSync(sampleDataPath, 'utf-8').trim();
 
 const sampleAnswer = null;
 
-// started: launch!
+// started: launch
 // ended: 
 
-const puzzle = (inputText) => {
-	const text = inputText.trim();
+const puzzle = (text) => {
 
 	
 };

@@ -1,5 +1,7 @@
 const me = {};
 
+/* ---------- SETS AND MAPS ---------- */
+
 me.mapStringChars = (string) => {
 	const map = {};
 	string.split('').forEach((char) => {
@@ -56,7 +58,61 @@ me.arrayContainsArray = (largeArray, smallArray) => {
 	return overlaps.length === smallArray.length;
 };
 
-/* ---------- JUST FOR FUN ---------- */
+/* ---------- GRIDS ---------- */
+
+me.makeBlankGrid = (width, height, fillChar) => {
+	const char = fillChar ? fillChar : '.';
+	const row = [];
+	row.length = width;
+	row.fill(char);
+	const rows = [];
+	for (let i = 0; i <= height; i++) {
+		rows.push(row.slice());
+	}
+	return rows;
+};
+
+me.fuseGrid = (grid) => {
+	return grid.map((row) => {
+		return row.join('');
+	}).join('\n');
+};
+
+me.drawUnanchoredCoords = (coordsArray) => {
+	let coords = Array.isArray(coordsArray[0])
+		? coordsArray.map((coords) => {
+			return {
+				x: coords[0],
+				y: coords[1],
+				char: '#'
+			}
+		})
+		: coordsArray;
+	const minX = coords.map((coords)=>coords.x).reduce((prev,cur)=>Math.min(prev,cur),Infinity);
+	const maxX = coords.map((coords)=>coords.x).reduce((prev,cur)=>Math.max(prev,cur),-Infinity);
+	const minY = coords.map((coords)=>coords.y).reduce((prev,cur)=>Math.min(prev,cur),Infinity);
+	const maxY = coords.map((coords)=>coords.y).reduce((prev,cur)=>Math.max(prev,cur),-Infinity);
+	const sizeX = maxX - minX;
+	const sizeY = maxY - minY;
+	const grid = me.makeNewGrid(sizeX, sizeY, '.');
+	const plotChar = (x,y,char) => {
+		const realX = x - minX;
+		const realY = y - minY;
+		grid[realY][realX] = char;
+	}
+	coords.forEach((coord) => {
+		plotChar(
+			coord.x,
+			coord.y,
+			coord.char || '#'
+		);
+	})
+	const drawableGrid = grid.reverse();
+	console.log(me.fuseGrid(drawableGrid));
+	return me.fuseGrid(drawableGrid);
+};
+
+/* ---------- UNIT TEST-ISH ---------- */
 
 const ansi = {
 	red: '\u001B[31;1m', // +bold
