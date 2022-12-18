@@ -115,23 +115,31 @@ me.drawUnanchoredCoords = (coordsArray) => {
 /* ---------- UNIT TEST-ISH ---------- */
 
 const ansi = {
-	red: '\u001B[31;1m', // +bold
-	green: '\u001B[32;1m', // +bold
-	blue: '\u001B[34;1m', // +bold
+	black: '\u001B[30m',
+	red: '\u001B[31m',
+	green: '\u001B[32m',
+	yellow: '\u001B[33m',
+	blue: '\u001B[34m',
+	magenta: '\u001B[35m',
+	cyan: '\u001B[36m',
 	white: '\u001B[37m',
 	clear: '\u001B[0m',
+	bold: '\u001B[1m',
 };
 me.ansi = ansi;
 
-me.styleText = (text, color) => {
-	// quickie
-	return `${ansi[color]}${text}${ansi.clear}`
+me.styleText = (...args) => {
+	const text = args[0];
+	const styles = args.slice(1);
+	const ansiStyles = styles.map((item)=>ansi[item]).join('');
+	return `${ansiStyles}${text}${ansi.clear}`;
 };
+
 me.unitTestResults = (testName, expected, received) => {
 	const color = expected === received ? ansi.green : ansi.red;
-	let message = `${ansi.white}${testName}: ${color}${received}`;
+	let message = `${ansi.yellow}${ansi.bold}${testName}: ${color}${received}`;
 	if (expected !== received) {
-		message += ` ${ansi.clear}${ansi.white}(expected: ${expected})${ansi.clear}`;
+		message += ` ${ansi.clear}${ansi.bold}${ansi.yellow}(expected: ${expected})${ansi.clear}`;
 	}
 	return message += ansi.clear;
 };

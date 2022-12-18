@@ -8,14 +8,11 @@ const sampleDataPath = path.join(__dirname , 'sample-input.txt');
 const fileText = fs.readFileSync(dataPath, 'utf-8').trim();
 const sampleFileText = fs.readFileSync(sampleDataPath, 'utf-8').trim();
 
-const sampleAnswer = 1707;
-
-// the next day... :/
-
 const volcanoTime = 26;
 
 const makePathData = (text) => {
 	const pathData = {};
+	// orig data
 	text.split('\n').forEach((line)=>{
 		const cleanLine = line
 			.replace('Valve ','')
@@ -30,6 +27,7 @@ const makePathData = (text) => {
 			tunnels: cleanLine[2].split(', ')
 		}
 	})
+	// supplemental
 	Object.keys(pathData).forEach((roomName) => {
 		// distance for this room to its neighbors
 		const results = {};
@@ -51,7 +49,7 @@ const makePathData = (text) => {
 		}
 		results[roomName] = 0;
 		pathData[roomName].distances = results;
-		// while we're here, calculate the lifetime points if turned on in a specific minute
+		// while we're here, calculate the lifetime points if valve is turned on in a specific minute
 		const lifetimePoints = [ 0 ];
 		for (let i = 1; i <= volcanoTime; i++) {
 			lifetimePoints[i] = pathData[roomName].flowRate * (volcanoTime - i) || 0;
@@ -125,7 +123,7 @@ const findBestComplimentScrunch = (scrunched, arrayString) => {
 	const bestCompliment = Object.values(filtered).sort((a,b) => {
 		return scrunched[b] - scrunched[a]
 	})[0];
-	return scrunched[bestCompliment] || 0;
+	return bestCompliment;
 };
 
 const waitOutState = (state) => {
@@ -195,24 +193,37 @@ const puzzle = (text) => {
 	}
 	// ELEPHANT COMBO TIME
 	let bestPath1 = '';
+	let bestPath2 = '';
+	let bestPath1Score = '';
+	let bestPath2Score = '';
 	let bestCombo = 0;
 	Object.keys(scrunched).forEach((path1) => {
 		const path1Score = scrunched[path1];
-		const path2Score = findBestComplimentScrunch(scrunched, path1);
+		const path2Name = findBestComplimentScrunch(scrunched, path1);
+		const path2Score = scrunched[path2Name] || 0;
 		const combo = path1Score + path2Score;
 		if (combo > bestCombo) {
 			bestPath1 = path1;
+			bestPath2 = path2Name;
+			bestPath1Score = path1Score;
+			bestPath2Score = path2Score;
 			bestCombo = combo;
 		}
 	})
-	// console.log(`Path 1: ${bestPath1} (score ${bestCombo})`);
+	console.log(`\nValves opened by player 1: ${bestPath1} (pressure: ${bestPath1Score})`);
+	console.log(`Valves opened by player 2: ${bestPath2} (pressure: ${bestPath2Score})`);
+	console.log(`NOTE: Valves are alphabetized, not in pathing order!`);
 	return bestCombo;
 };
 
 console.log(me.unitTestResults(
 	'Sample input',
-	sampleAnswer,
+	1707,
 	puzzle(sampleFileText)
 ));
-console.log("real input:", puzzle(fileText)); // answer: 2216
-// answer takes 49 seconds
+console.log(me.unitTestResults(
+	'Real input',
+	2216,
+	puzzle(fileText)
+));
+// answer takes 48 seconds
