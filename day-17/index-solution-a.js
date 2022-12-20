@@ -156,7 +156,7 @@ const puzzle = (text) => {
 
 console.log(me.unitTestResults(
 	'Sample input',
-	1514285714288,
+	3068,
 	puzzle(sampleFileText)
 ));
 console.log("real input:", puzzle(fileText));
