@@ -63,10 +63,10 @@ me.arrayContainsArray = (largeArray, smallArray) => {
 me.makeBlankGrid = (width, height, fillChar) => {
 	const char = fillChar ? fillChar : '.';
 	const row = [];
-	row.length = width;
+	row.length = width + 1;
 	row.fill(char);
 	const rows = [];
-	for (let i = 0; i <= height; i++) {
+	for (let i = 0; i < height + 1; i++) {
 		rows.push(row.slice());
 	}
 	return rows;
@@ -79,22 +79,32 @@ me.fuseGrid = (grid) => {
 };
 
 me.drawUnanchoredCoords = (coordsArray) => {
-	let coords = Array.isArray(coordsArray[0])
-		? coordsArray.map((coords) => {
+	let coords = JSON.parse(JSON.stringify(coordsArray));
+	if (Array.isArray(coordsArray[0])) {
+		coords = coords.map((coords) => {
 			return {
 				x: coords[0],
 				y: coords[1],
 				char: '#'
-			}
-		})
-		: coordsArray;
+			};
+		});
+	} else if (typeof coordsArray[0] === 'string') {
+		coords = coords.map((coords) => {
+			const splits = coords.split(',').map((n) => n * 1);
+			return {
+				x: splits[0],
+				y: splits[1],
+				char: '#'
+			};
+		});
+	}
 	const minX = coords.map((coords)=>coords.x).reduce((prev,cur)=>Math.min(prev,cur),Infinity);
 	const maxX = coords.map((coords)=>coords.x).reduce((prev,cur)=>Math.max(prev,cur),-Infinity);
 	const minY = coords.map((coords)=>coords.y).reduce((prev,cur)=>Math.min(prev,cur),Infinity);
 	const maxY = coords.map((coords)=>coords.y).reduce((prev,cur)=>Math.max(prev,cur),-Infinity);
 	const sizeX = maxX - minX;
 	const sizeY = maxY - minY;
-	const grid = me.makeNewGrid(sizeX, sizeY, '.');
+	const grid = me.makeBlankGrid(sizeX, sizeY, '.');
 	const plotChar = (x,y,char) => {
 		const realX = x - minX;
 		const realY = y - minY;
@@ -108,7 +118,7 @@ me.drawUnanchoredCoords = (coordsArray) => {
 		);
 	})
 	const drawableGrid = grid.reverse();
-	console.log(me.fuseGrid(drawableGrid));
+	// console.log(me.fuseGrid(drawableGrid));
 	return me.fuseGrid(drawableGrid);
 };
 
